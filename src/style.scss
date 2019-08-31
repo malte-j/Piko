@@ -1,0 +1,26 @@
+* { box-sizing: border-box; }
+body, html {
+	margin: 0;
+	height: 100%;
+	font-family: 'Vollkorn', serif;
+}
+
+body {
+	padding: 10vh;
+	font-size: 24px;
+}
+
+textarea {
+	border: none;
+	display: block;
+	font-family: 'Vollkorn', serif;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+	line-height: 1.25em;
+	margin: 0 auto;
+	max-width: 700px;
+	outline: none;
+	overflow: hidden;
+	resize: none;
+	width: 100%;
+}

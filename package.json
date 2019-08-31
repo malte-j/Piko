@@ -1,0 +1,18 @@
+{
+  "name": "malteditor",
+  "version": "0.0.1",
+  "description": "Hypersimple text editor",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel ./src/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lz-string": "^1.4.4",
+    "parcel-bundler": "^1.12.3"
+  },
+  "devDependencies": {
+    "sass": "^1.22.10"
+  }
+}
