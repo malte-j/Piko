@@ -25,11 +25,12 @@ const app = {
       text = ''
     }
     textarea.value = text
+    app.resize()
     textarea.focus()
 
   },
   resize: () => {
-    // resize input 
+    // resize input field 
     textarea.style.height = "";
     textarea.style.height = textarea.scrollHeight + "px";
   },
