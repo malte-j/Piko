@@ -11,6 +11,8 @@ body {
 }
 
 textarea {
+	background-color: inherit;
+	color: inherit;
 	border: none;
 	display: block;
 	font-family: 'Vollkorn', serif;
@@ -23,4 +25,66 @@ textarea {
 	overflow: hidden;
 	resize: none;
 	width: 100%;
+}
+
+.dark {
+	color: #ccc8bb;
+	background: #252525;
+
+	>.foldout {
+		background: rgba(0, 0, 0, 0.089);
+		color: inherit;
+	}
+}
+
+.darkSwitch {
+	border: 1px rgba(255, 255, 255, 0.294);
+	cursor: pointer;
+	color: inherit;
+	padding: 1em;
+	background: none;
+	border-radius: 20px;
+	outline: none;
+}
+
+.foldout {
+	position: absolute;
+	top:0;
+	left: 0;
+	height: 100%;
+	width: 20vw;
+	overflow: hidden;
+	
+	
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	cursor: pointer;
+	opacity: 0;
+	background: rgba(255,255,255,.2);
+	transform: translateX(-80%);
+	transition: transform .15s ease-out, opacity .15s ease-out;
+
+	&:hover {
+		transform: translateX(0%);
+
+		padding: 2vw;
+		width: 20vw;
+		backdrop-filter: blur(8px);
+		opacity: 1;
+		overflow: inherit;
+		box-shadow: 0px 0px 24px rgba(0,0,0,.08);
+		transition: transform .15s ease-out, opacity .15s ease-out;
+
+	}
+}
+
+
+@media screen and (max-width: 400px) {
+	body {
+		font-size: 18px;
+		padding: 10vw;
+	}
 }

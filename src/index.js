@@ -1,5 +1,6 @@
 const LZString = require('lz-string')
 const textarea = document.querySelector("textarea")
+const button = document.querySelector(".darkSwitch")
 
 const app = {
   toExec: null,
@@ -18,6 +19,13 @@ const app = {
     }, 800)
   },
   load: () => {
+    // Load dark mode from localStorage
+    if(localStorage.getItem("darkMode") === "true") {
+      document.querySelector("body").classList.add("dark")
+    }
+
+
+    // Load text from URL
     let text = document.location.search.split('=')[1]
     if (text) {
       text = LZString.decompressFromEncodedURIComponent(text)
@@ -38,9 +46,14 @@ const app = {
     app.resize()
     app.save()
   },
+  toggleDarkMode: () => {
+    let toggled = document.querySelector("body").classList.toggle("dark")
+    localStorage.setItem("darkMode", toggled)
+  }
 }
 
 
 textarea.oninput = app.onInput
 window.onload = app.load()
 window.onresize = app.resize
+button.onclick = app.toggleDarkMode
