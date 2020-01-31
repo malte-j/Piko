@@ -24,7 +24,6 @@ const app = {
       document.querySelector("body").classList.add("dark")
     }
 
-
     // Load text from URL
     let text = document.location.search.split('=')[1]
     if (text) {
@@ -35,7 +34,6 @@ const app = {
     textarea.value = text
     app.resize()
     textarea.focus()
-
   },
   resize: () => {
     // resize input field 
@@ -49,11 +47,29 @@ const app = {
   toggleDarkMode: () => {
     let toggled = document.querySelector("body").classList.toggle("dark")
     localStorage.setItem("darkMode", toggled)
+  },
+  toggleFullScreen: () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
   }
 }
 
+let interactables = [
+  {
+    el: ".darkSwitch",
+    onclick: app.toggleDarkMode
+  },
+  {
+    el: ".toggleFullscreen",
+    onclick: app.toggleFullScreen
+  }
+]
 
 textarea.oninput = app.onInput
 window.onload = app.load()
 window.onresize = app.resize
-button.onclick = app.toggleDarkMode
+
+interactables.map(i => document.querySelector(i.el).addEventListener("click", i.onclick))
