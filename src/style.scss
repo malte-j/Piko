@@ -6,18 +6,16 @@ body, html {
 }
 
 body {
-	padding: 10vh;
-	font-size: 24px;
+  font-size: min(max(18px, 4vw), 24px);
+	padding: min(max(20px, 8vw), 100px);
 }
 
 textarea {
 	background-color: inherit;
-	color: inherit;
 	border: none;
+	color: inherit;
 	display: block;
 	font-family: 'Vollkorn', serif;
-  font-size: inherit;
-  font-variant-numeric: tabular-nums;
 	line-height: 1.25em;
 	margin: 0 auto;
 	max-width: 700px;
@@ -25,6 +23,8 @@ textarea {
 	overflow: hidden;
 	resize: none;
 	width: 100%;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
 }
 
 .toggleFullscreen {
@@ -72,7 +72,6 @@ button {
 	width: 100%;
 	overflow: hidden;
 	
-	
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -96,14 +95,6 @@ button {
 	.dark & {
 		background: rgba(0, 0, 0, 0.089);
 		color: inherit;
-	}
-}
-
-
-@media screen and (max-width: 400px) {
-	body {
-		font-size: 18px;
-		padding: 10vw;
 	}
 }
 
