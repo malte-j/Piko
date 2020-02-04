@@ -15,5 +15,8 @@
   },
   "devDependencies": {
     "sass": "^1.25.0"
-  }
+  },
+  "browserslist": [
+    "since 2017-06"
+  ]
 }
