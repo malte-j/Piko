@@ -4,5 +4,11 @@
 
 A hypersimple texteditor that saves your progress in the url.
 
+## TODO
+ - Share button
+ - Copy url button
+ - change font size
+ - intro for showing user action bar 
+
 Google fonts issue: 
 https://github.com/GoogleChrome/workbox/issues/1563
