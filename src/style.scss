@@ -7,9 +7,8 @@ body, html {
 
 body {
 	font-size: 20px;
-  font-size: min(max(18px, 4vw), 24px);
 	padding: 8vw;
-	padding: min(max(20px, 8vw), 100px);
+  font-size: min(max(18px, 4vw), 24px);
 }
 
 textarea {
