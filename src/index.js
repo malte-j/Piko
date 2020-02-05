@@ -76,7 +76,9 @@ interactables.map(i => document.querySelector(i.el).addEventListener("click", i.
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+    const x = "sw.js";
+    navigator.serviceWorker.register(x)
+    .then(function(registration) {
       // Registration was successful
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {

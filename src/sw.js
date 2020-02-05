@@ -1,53 +1,25 @@
-var CACHE_NAME = 'piko-cache-v1';
-var urlsToCache = [
-  '/',
-  '/*style.css',
-  '/*index.js',
-  'https://fonts.googleapis.com/css?family=Vollkorn&display=swap'
-];
 
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
-self.addEventListener('install', function(event) {
-  // Perform install steps
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
-});
+workbox.core.skipWaiting();
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
+workbox.core.clientsClaim();
 
-        return fetch(event.request).then(
-          function(response) {
-            // Check if we received a valid response
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
+workbox.precaching.precacheAndRoute([]);
 
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have two streams.
-            var responseToCache = response.clone();
+workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL("/index.html"));
 
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-    );
-});
+workbox.routing.registerRoute(
+  new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
+  workbox.strategies.cacheFirst({
+    cacheName: 'google-fonts',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 30,
+      }),
+      new workbox.cacheableResponse.Plugin({
+        statuses: [0, 200]
+      }),
+    ],
+  }),
+);

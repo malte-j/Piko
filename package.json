@@ -14,9 +14,16 @@
     "parcel-bundler": "^1.12.4"
   },
   "devDependencies": {
+    "parcel-plugin-sw-cache": "^0.3.1",
     "sass": "^1.25.0"
   },
   "browserslist": [
     "since 2017-06"
-  ]
+  ],
+  "cache": {
+    "strategy": "inject",
+    "globPatterns": ["**/*.{html,js,css,jpg,png,webmanifest,ico,svg}"],
+    "swSrc": "./src/sw.js",
+		"swDest": "sw.js"
+  }
 }
