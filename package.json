@@ -22,8 +22,10 @@
   ],
   "cache": {
     "strategy": "inject",
-    "globPatterns": ["**/*.{html,js,css,jpg,png,webmanifest,ico,svg}"],
+    "globPatterns": [
+      "**/*.{html,js,css,jpg,png,webmanifest,ico,svg}"
+    ],
     "swSrc": "./src/sw.js",
-		"swDest": "sw.js"
+    "swDest": "sw.js"
   }
 }

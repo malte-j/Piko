@@ -1,6 +1,5 @@
 const LZString = require('lz-string')
 const textarea = document.querySelector("textarea")
-const button = document.querySelector(".darkSwitch")
 
 const app = {
   toExec: null,
@@ -10,18 +9,28 @@ const app = {
 
     // start new function to be executed
     this.toExec = setTimeout(()=>{
+      let urlParams = new URLSearchParams(window.location.search);
+
       if (textarea.value == '') {
-        history.replaceState({}, "Malteditor", `/`);
+        urlParams.set('text', '');
       } else {
         let text = LZString.compressToEncodedURIComponent(textarea.value) 
-        history.replaceState({}, "Malteditor", `?text=${text}`);
+        urlParams.set('text', text);
       }
+
+      history.replaceState({}, "Malteditor", '?' + urlParams.toString());
     }, 800)
   },
   load: () => {
     // Load dark mode from localStorage
     if(localStorage.getItem("darkMode") === "true") {
       document.querySelector("body").classList.add("dark")
+    }
+
+    let urlParams = new URLSearchParams(window.location.search);
+
+    if(urlParams.get('font') == 'monospace') {
+      document.querySelector('body').classList.add('monospace')
     }
 
     // Load text from URL
@@ -34,9 +43,14 @@ const app = {
     textarea.value = text
     app.resize()
     textarea.focus()
+
+    // setup event listener for tab
+    textarea.addEventListener("keydown", app.handleTab)
   },
   resize: () => {
     // resize input field 
+    const parent = document.querySelector('body');
+    parent.clientHeight - parseFloat(getComputedStyle(parent).paddingTop) - parseFloat(getComputedStyle(parent).paddingTop)
     textarea.style.height = "";
     textarea.style.height = textarea.scrollHeight + "px";
   },
@@ -54,6 +68,32 @@ const app = {
     } else if (document.exitFullscreen) {
         document.exitFullscreen();
     }
+  },
+  toggleFont: () => {
+    let toggled = document.querySelector("body").classList.toggle("monospace");
+    let urlParams = new URLSearchParams(window.location.search);
+    
+    if(toggled) {
+      urlParams.set('font', 'monospace');
+    } else {
+      urlParams.set('font', 'serif');
+    }
+    history.replaceState({}, "Malteditor", '?' + urlParams.toString());
+  },
+  handleTab: (e) => {
+    console.log("tab")
+    if(e.key === 'Tab') {
+       if (textarea.selectionStart || textarea.selectionStart == '0') {
+          var startPos = textarea.selectionStart;
+          var endPos = textarea.selectionEnd;
+          textarea.value = textarea.value.substring(0, startPos)
+              + "  "
+              + textarea.value.substring(endPos, textarea.value.length);
+      } else {
+        textarea.value += "  ";
+      }
+      e.preventDefault();
+    }
   }
 }
 
@@ -65,8 +105,13 @@ let interactables = [
   {
     el: ".toggleFullscreen",
     onclick: app.toggleFullScreen
+  },
+  {
+    el: ".switchFont",
+    onclick: app.toggleFont
   }
 ]
+
 
 textarea.oninput = app.onInput
 window.onload = app.load()
