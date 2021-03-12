@@ -11,15 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "lz-string": "^1.4.4",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "1.12.3",
+    "parcel-plugin-sw-cache": "^0.3.1"
   },
   "devDependencies": {
-    "parcel-plugin-sw-cache": "^0.3.1",
-    "sass": "^1.25.0"
+    "sass": "^1.32.8"
   },
-  "browserslist": [
-    "since 2017-06"
-  ],
   "cache": {
     "strategy": "inject",
     "globPatterns": [

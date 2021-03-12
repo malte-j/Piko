@@ -34,7 +34,7 @@ const app = {
     }
 
     // Load text from URL
-    let text = document.location.search.split('=')[1]
+    let text = urlParams.get('text')
     if (text) {
       text = LZString.decompressFromEncodedURIComponent(text)
     } else {
