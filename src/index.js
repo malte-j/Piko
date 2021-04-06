@@ -8,13 +8,13 @@ const app = {
     clearTimeout(this.toExec)
 
     // start new function to be executed
-    this.toExec = setTimeout(()=>{
+    this.toExec = setTimeout(() => {
       let urlParams = new URLSearchParams(window.location.search);
 
       if (textarea.value == '') {
         urlParams.set('text', '');
       } else {
-        let text = LZString.compressToEncodedURIComponent(textarea.value) 
+        let text = LZString.compressToEncodedURIComponent(textarea.value)
         urlParams.set('text', text);
       }
 
@@ -23,13 +23,13 @@ const app = {
   },
   load: () => {
     // Load dark mode from localStorage
-    if(localStorage.getItem("darkMode") === "true") {
+    if (localStorage.getItem("darkMode") === "true") {
       document.querySelector("body").classList.add("dark")
     }
 
     let urlParams = new URLSearchParams(window.location.search);
 
-    if(urlParams.get('font') == 'monospace') {
+    if (urlParams.get('font') == 'monospace') {
       document.querySelector('body').classList.add('monospace')
     }
 
@@ -66,14 +66,14 @@ const app = {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
     } else if (document.exitFullscreen) {
-        document.exitFullscreen();
+      document.exitFullscreen();
     }
   },
   toggleFont: () => {
     let toggled = document.querySelector("body").classList.toggle("monospace");
     let urlParams = new URLSearchParams(window.location.search);
-    
-    if(toggled) {
+
+    if (toggled) {
       urlParams.set('font', 'monospace');
     } else {
       urlParams.set('font', 'serif');
@@ -81,19 +81,67 @@ const app = {
     history.replaceState({}, "Malteditor", '?' + urlParams.toString());
   },
   handleTab: (e) => {
-    console.log("tab")
-    if(e.key === 'Tab') {
-       if (textarea.selectionStart || textarea.selectionStart == '0') {
-          var startPos = textarea.selectionStart;
-          var endPos = textarea.selectionEnd;
-          textarea.value = textarea.value.substring(0, startPos)
-              + "  "
-              + textarea.value.substring(endPos, textarea.value.length);
-      } else {
-        textarea.value += "  ";
-      }
+    // Tab key?
+    if (e.keyCode === 9) {
       e.preventDefault();
+
+      // selection?
+      if (textarea.selectionStart == textarea.selectionEnd) {
+        // These single character operations are undoable
+        if (!e.shiftKey) {
+          document.execCommand('insertText', false, "  ");
+        }
+        else {
+          var text = textarea.value;
+          for(let i = 0; i<2; i++) 
+            if (textarea.selectionStart > 0 && text[textarea.selectionStart - 1] == ' ') 
+              document.execCommand('delete');
+        }
+      }
+      else {
+        // Block indent/unindent trashes undo stack.
+        // @TODO: refactor and use document.execCommand to delete
+        // Select whole lines
+        let selStart = textarea.selectionStart;
+        let selEnd = textarea.selectionEnd;
+        const text = textarea.value;
+
+        while (selStart > 0 && text[selStart - 1] != '\n')
+          selStart--;
+        while (selEnd > 0 && text[selEnd - 1] != '\n' && selEnd < text.length)
+          selEnd++;
+
+        // Get selected text
+        let lines = text.substr(selStart, selEnd - selStart).split('\n');
+
+        // Insert tabs
+        for (let i = 0; i < lines.length; i++) {
+          // Don't indent last line if cursor at start of line
+          if (i == lines.length - 1 && lines[i].length == 0)
+            continue;
+
+          // Tab or Shift+Tab?
+          if (e.shiftKey) {
+            if (lines[i].startsWith("  "))
+              lines[i] = lines[i].substr(2);
+          } else {
+            lines[i] = "  " + lines[i];
+          }
+        }
+
+        lines = lines.join('\n');
+
+        // Update the text area
+        textarea.value = text.substr(0, selStart) + lines + text.substr(selEnd);
+        textarea.selectionStart = selStart;
+        textarea.selectionEnd = selStart + lines.length;
+      }
+
+      return false;
     }
+
+    // enabled = true;
+    return true;
   }
 }
 
@@ -120,15 +168,15 @@ window.onresize = app.resize
 interactables.map(i => document.querySelector(i.el).addEventListener("click", i.onclick))
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
     const x = "sw.js";
     navigator.serviceWorker.register(x)
-    .then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
+      .then(function (registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function (err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
   });
 }
