@@ -1,66 +1,79 @@
-const LZString = require('lz-string')
-const textarea = document.querySelector("textarea")
+const LZString = require("lz-string");
+const textarea = document.querySelector("textarea");
 
 const app = {
   toExec: null,
   save: () => {
     // reset time since last function call
-    clearTimeout(this.toExec)
+    clearTimeout(this.toExec);
 
     // start new function to be executed
     this.toExec = setTimeout(() => {
       let urlParams = new URLSearchParams(window.location.search);
 
-      if (textarea.value == '') {
-        urlParams.set('text', '');
+      if (textarea.value == "") {
+        urlParams.set("text", "");
       } else {
-        let text = LZString.compressToEncodedURIComponent(textarea.value)
-        urlParams.set('text', text);
+        let text = LZString.compressToEncodedURIComponent(textarea.value);
+        urlParams.set("text", text);
       }
 
-      history.replaceState({}, "Malteditor", '?' + urlParams.toString());
-    }, 800)
+      history.replaceState({}, "Malteditor", "?" + urlParams.toString());
+    }, 800);
   },
   load: () => {
     // Load dark mode from localStorage
     if (localStorage.getItem("darkMode") === "true") {
-      document.querySelector("body").classList.add("dark")
+      document.querySelector("body").classList.add("dark");
     }
 
     let urlParams = new URLSearchParams(window.location.search);
 
-    if (urlParams.get('font') == 'monospace') {
-      document.querySelector('body').classList.add('monospace')
+    if (urlParams.get("font") == "monospace") {
+      document.querySelector("body").classList.add("monospace");
     }
 
     // Load text from URL
-    let text = urlParams.get('text')
+    let text = urlParams.get("text");
     if (text) {
-      text = LZString.decompressFromEncodedURIComponent(text)
+      text = LZString.decompressFromEncodedURIComponent(text);
     } else {
-      text = ''
+      text = "";
     }
-    textarea.value = text
-    app.resize()
-    textarea.focus()
+    textarea.value = text;
+
+    // @TODO: fix size on load
+    // app.resize()
+
+    textarea.focus();
+    app.initResize();
 
     // setup event listener for tab
-    textarea.addEventListener("keydown", app.handleTab)
+    textarea.addEventListener("keydown", app.handleTab);
   },
-  resize: () => {
-    // resize input field 
-    const parent = document.querySelector('body');
-    parent.clientHeight - parseFloat(getComputedStyle(parent).paddingTop) - parseFloat(getComputedStyle(parent).paddingTop)
-    textarea.style.height = "";
-    textarea.style.height = textarea.scrollHeight + "px";
+  initResize: () => {
+    const textareaWrapper = document.querySelector(".grow-wrap");
+    const textarea = textareaWrapper.querySelector("textarea");
+    textareaWrapper.dataset.replicatedValue = textarea.value;
+
+    textarea.addEventListener("input", () => {
+      textareaWrapper.dataset.replicatedValue = textarea.value;
+    });
   },
+  // resize: () => {
+  //   // resize input field
+  //   const parent = document.querySelector('body');
+  //   parent.clientHeight - parseFloat(getComputedStyle(parent).paddingTop) - parseFloat(getComputedStyle(parent).paddingTop)
+  //   textarea.style.height = "";
+  //   textarea.style.height = textarea.scrollHeight + "px";
+  // },
   onInput: () => {
-    app.resize()
-    app.save()
+    // app.resize();
+    app.save();
   },
   toggleDarkMode: () => {
-    let toggled = document.querySelector("body").classList.toggle("dark")
-    localStorage.setItem("darkMode", toggled)
+    let toggled = document.querySelector("body").classList.toggle("dark");
+    localStorage.setItem("darkMode", toggled);
   },
   toggleFullScreen: () => {
     if (!document.fullscreenElement) {
@@ -74,11 +87,11 @@ const app = {
     let urlParams = new URLSearchParams(window.location.search);
 
     if (toggled) {
-      urlParams.set('font', 'monospace');
+      urlParams.set("font", "monospace");
     } else {
-      urlParams.set('font', 'serif');
+      urlParams.set("font", "serif");
     }
-    history.replaceState({}, "Malteditor", '?' + urlParams.toString());
+    history.replaceState({}, "Malteditor", "?" + urlParams.toString());
   },
   handleTab: (e) => {
     // Tab key?
@@ -89,16 +102,17 @@ const app = {
       if (textarea.selectionStart == textarea.selectionEnd) {
         // These single character operations are undoable
         if (!e.shiftKey) {
-          document.execCommand('insertText', false, "  ");
-        }
-        else {
+          document.execCommand("insertText", false, "  ");
+        } else {
           var text = textarea.value;
-          for(let i = 0; i<2; i++) 
-            if (textarea.selectionStart > 0 && text[textarea.selectionStart - 1] == ' ') 
-              document.execCommand('delete');
+          for (let i = 0; i < 2; i++)
+            if (
+              textarea.selectionStart > 0 &&
+              text[textarea.selectionStart - 1] == " "
+            )
+              document.execCommand("delete");
         }
-      }
-      else {
+      } else {
         // Block indent/unindent trashes undo stack.
         // @TODO: refactor and use document.execCommand to delete
         // Select whole lines
@@ -106,30 +120,27 @@ const app = {
         let selEnd = textarea.selectionEnd;
         const text = textarea.value;
 
-        while (selStart > 0 && text[selStart - 1] != '\n')
-          selStart--;
-        while (selEnd > 0 && text[selEnd - 1] != '\n' && selEnd < text.length)
+        while (selStart > 0 && text[selStart - 1] != "\n") selStart--;
+        while (selEnd > 0 && text[selEnd - 1] != "\n" && selEnd < text.length)
           selEnd++;
 
         // Get selected text
-        let lines = text.substr(selStart, selEnd - selStart).split('\n');
+        let lines = text.substr(selStart, selEnd - selStart).split("\n");
 
         // Insert tabs
         for (let i = 0; i < lines.length; i++) {
           // Don't indent last line if cursor at start of line
-          if (i == lines.length - 1 && lines[i].length == 0)
-            continue;
+          if (i == lines.length - 1 && lines[i].length == 0) continue;
 
           // Tab or Shift+Tab?
           if (e.shiftKey) {
-            if (lines[i].startsWith("  "))
-              lines[i] = lines[i].substr(2);
+            if (lines[i].startsWith("  ")) lines[i] = lines[i].substr(2);
           } else {
             lines[i] = "  " + lines[i];
           }
         }
 
-        lines = lines.join('\n');
+        lines = lines.join("\n");
 
         // Update the text area
         textarea.value = text.substr(0, selStart) + lines + text.substr(selEnd);
@@ -142,41 +153,47 @@ const app = {
 
     // enabled = true;
     return true;
-  }
-}
+  },
+};
 
 let interactables = [
   {
     el: ".darkSwitch",
-    onclick: app.toggleDarkMode
+    onclick: app.toggleDarkMode,
   },
   {
     el: ".toggleFullscreen",
-    onclick: app.toggleFullScreen
+    onclick: app.toggleFullScreen,
   },
   {
     el: ".switchFont",
-    onclick: app.toggleFont
-  }
-]
+    onclick: app.toggleFont,
+  },
+];
 
+textarea.oninput = app.onInput;
+window.onload = app.load();
+window.onresize = app.resize;
 
-textarea.oninput = app.onInput
-window.onload = app.load()
-window.onresize = app.resize
+interactables.map((i) =>
+  document.querySelector(i.el).addEventListener("click", i.onclick)
+);
 
-interactables.map(i => document.querySelector(i.el).addEventListener("click", i.onclick))
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
     const x = "sw.js";
-    navigator.serviceWorker.register(x)
-      .then(function (registration) {
+    navigator.serviceWorker.register(x).then(
+      function (registration) {
         // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function (err) {
+        console.log(
+          "ServiceWorker registration successful with scope: ",
+          registration.scope
+        );
+      },
+      function (err) {
         // registration failed :(
-        console.log('ServiceWorker registration failed: ', err);
-      });
+        console.log("ServiceWorker registration failed: ", err);
+      }
+    );
   });
 }

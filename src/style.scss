@@ -1,149 +1,181 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
-	--main-col: #000;
-	--bg-col: #fff;
+  --main-col: #000;
+  --bg-col: #fff;
 }
 
 body.dark {
-	--main-col: #ccc8bb;
-	--bg-col: #202020;
+  --main-col: #ccc8bb;
+  --bg-col: #202020;
 }
 
-body, html {
-	margin: 0;
-	height: 100%;
-	font-family: 'Vollkorn', serif;
-	color: var(--main-col);
-	background: var(--bg-col);
+body,
+html {
+  margin: 0;
+  height: 100%;
+  font-family: "Vollkorn", serif;
+  color: var(--main-col);
+  background: var(--bg-col);
 }
 
 body::-webkit-scrollbar {
-  width: .4em;
+  width: 0.4em;
 }
- 
+
 body::-webkit-scrollbar-thumb {
-	background-color: rgb(20, 20, 20);
-	border-radius: 1rem;
+  background-color: rgb(20, 20, 20);
+  border-radius: 1rem;
 }
 
 body.dark::-webkit-scrollbar-thumb {
-	background-color: #ebebeb31;
-
+  background-color: #ebebeb31;
 }
 
 body {
-	font-size: 20px;
-	padding: 8vw;
+  font-size: 20px;
+  padding: 8vw;
   font-size: min(max(18px, 4vw), 24px);
 }
 
-textarea {
-	background-color: inherit;
-	border: none;
-	color: inherit;
-	display: block;
-	font-family: inherit;
-	line-height: 1.25em;
-	margin: 0 auto;
-	max-width: 700px;
-	outline: none;
-	overflow: hidden;
-	resize: none;
-	min-height: 100%;
-	width: 100%;
-  font-size: inherit;
-  font-variant-numeric: tabular-nums;
-}
-
 .toggleFullscreen {
-	.minimize {
-		display: none;
-	}
+  .minimize {
+    display: none;
+  }
 }
 
 .monospace {
-	font-family: "Space Mono", monospace;
-	font-size: 1.2rem;
+  font-family: "Space Mono", monospace;
+  font-size: 1.2rem;
 }
 
 button {
-	border: none;
-	cursor: pointer;
-	padding: 1em;
-	background: none;
-	outline: none;
+  border: none;
+  cursor: pointer;
+  padding: 1em;
+  background: none;
+  outline: none;
 }
 
 .darkSwitch {
-	.brightMode {
-		display: none;
-	}
-	.dark & {
-		.darkMode {
-			display: none;
-		}
-		.brightMode {
-			display: block;
-		}
-	}
+  .brightMode {
+    display: none;
+  }
+  .dark & {
+    .darkMode {
+      display: none;
+    }
+    .brightMode {
+      display: block;
+    }
+  }
 }
 
 .foldout {
-	position: absolute;
-	top:0;
-	left: 0;
-	height: auto;
-	width: 100%;
-	overflow: hidden;
-	
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
 
-	opacity: 0;
-	background: rgba(255,255,255,.2);
-	transform: translateY(-80%);
-	transition: transform .15s ease-out, opacity .15s ease-out;
-	padding: 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-	svg, img {
-		display: block;
-	}
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-80%);
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+  padding: 2vw;
 
-	&:hover {
-		transform: translateY(0%);
-		backdrop-filter: blur(8px);
-		opacity: 1;
-		box-shadow: 0px 0px 24px rgba(0,0,0,.08);
-		transition: transform .15s ease-out, opacity .15s ease-out;
-	}
+  svg,
+  img {
+    display: block;
+  }
 
-	.dark & {
-		background: rgba(0, 0, 0, 0.089);
-		color: inherit;
-	}
+  &:hover {
+    transform: translateY(0%);
+    backdrop-filter: blur(8px);
+    opacity: 1;
+    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+  }
 
-	.serifIcon {
-		display: none;
-	}
+  .dark & {
+    background: rgba(0, 0, 0, 0.089);
+    color: inherit;
+  }
+
+  .serifIcon {
+    display: none;
+  }
 }
 
 .monospace {
-	.monospaceIcon {
-		display: none;
-	}
-	.serifIcon {
-		display: block;
-	}
+  .monospaceIcon {
+    display: none;
+  }
+  .serifIcon {
+    display: block;
+  }
 }
+
 @media all and (display-mode: fullscreen) {
-	.toggleFullscreen {
-		.minimize {
-			display: block;
-		}
-		.maximize {
-			display: none;
-		}
-	}
+  .toggleFullscreen {
+    .minimize {
+      display: block;
+    }
+    .maximize {
+      display: none;
+    }
+  }
+}
+
+.grow-wrap {
+  /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
+  display: grid;
+  grid-template-columns: minmax(0px, 700px);
+  justify-content: center;
+  height: 100%;
+
+  &::after {
+    /* Note the weird space! Needed to preventy jumpy behavior */
+    content: attr(data-replicated-value) " ";
+
+    /* This is how textarea text behaves */
+    white-space: pre-wrap;
+
+    /* Hidden from view, clicks, and screen readers */
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.grow-wrap > textarea {
+  /* You could leave this, but after a user resizes, then it ruins the auto sizing */
+  resize: none;
+
+  /* Firefox shows scrollbar on growth, you can hide like this. */
+  overflow: hidden;
+}
+
+.grow-wrap > textarea,
+.grow-wrap::after {
+  /* Identical styling required!! */
+  font-family: inherit;
+  line-height: 1.25em;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  background-color: inherit;
+  border: none;
+  outline: none;
+
+  /* Place on top of each other */
+  grid-area: 1 / 1 / 2 / 2;
 }
